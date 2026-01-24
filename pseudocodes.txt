@@ -1,0 +1,14 @@
+1. # Print a list of all doctors based at a particular hospital.
+
+OUTPUT ‘Please enter hospital ID: ’
+HospitalID <- USERINPUT
+FOR row in hospital_table,
+	IF row.hospital_id = HospitalID
+	THEN
+	ADD row to results
+		IF row.doctor_id IN results
+		REMOVE row
+		ENDIF
+	ENDIF
+ENDFOR
+OUTPUT results
