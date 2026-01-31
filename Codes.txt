@@ -24,10 +24,11 @@ Purpose:
 
 Notes:
 -	The query uses ‘?’ as a placeholder for the patient_id (the foreign key referencing person_id in the patients table).
--	Only prescriptions linked to the specified patient_id will be returned, with all columns from the prescriptions table and patients table included in the output
+-	Only prescriptions linked to the specified patient_id will be returned, with all columns from the prescriptions table returned 
+-	The person_id, name, date_of_birth and doctor_id from the patients table are also included in the output to confirm the correct patient has been filtered.
 */
 
-SELECT *
+SELECT prescriptions.*, patients.person_id, patients.name, patients.date_of_birth, patients.doctor_id
 FROM prescriptions
 LEFT JOIN patients
 ON prescriptions.patient_id = patients.person_id
@@ -89,4 +90,11 @@ FROM hospitals
 WHERE MAX(hospitals.size)
 LEFT JOIN doctors
 ON hospitals.hospital_id = doctors.hospital_id;
+
+SELECT doctors.*, MAX(size)
+FROM hospitals
+WHERE size=MAX(size)
+LEFT JOIN doctors
+ON hospitals.hospital_id = doctors.hospital_id;
+
 
