@@ -1,14 +1,78 @@
-1. # Print a list of all doctors based at a particular hospital.
+#1. Print a list of all doctors based at a particular hospital.
 
-OUTPUT ‘Please enter hospital ID: ’
-HospitalID <- USERINPUT
-FOR row in hospital_table,
-	IF row.hospital_id = HospitalID
+OUTPUT ‘Please enter hospital_id: ’
+hospital_id <- USERINPUT 
+FOR row in doctors_table
+	IF row.hospital_id = hospital_id
 	THEN
-	ADD row to results
-		IF row.doctor_id IN results
-		REMOVE row
-		ENDIF
+	PRINT row
+ENDFOR
+OUTPUT list of results
+
+
+
+#2. Print a list of all prescriptions for a particular patient, ordered by the prescription date.
+
+OUTPUT ‘Please enter patient_id: ’ 
+patient_id <- USERINPUT
+FOR row in prescription_table 
+	IF row.patient_id = ‘patient_id’ 
+	THEN 
+	ADD row TO results
+	ORDER BY prescription date	
 	ENDIF
 ENDFOR
 OUTPUT results
+
+
+
+#3. Print a list of all prescriptions that a particular doctor has prescribed.
+
+OUTPUT ‘Please enter doctor_id: ’ 
+doctor_id’ <-USERINPUT
+	FOR row in prescriptions_table
+		IF row.doctor_id = ‘doctor_id’
+		THEN
+		PRINT row
+		ENDIF
+	ENDFOR
+OUTPUT list of results
+
+
+
+#4. Add a new patient to the database, including being registered with one of the doctors.
+
+OUTPUT “Please enter new patient details in the following format: person_id, name, date_of_birth, address, role, doctor_id: ”
+person_id, name, date_of_birth, address, role, doctor_id  <- USERINPUT
+IF doctor_id IN doctors_table.person_id
+	THEN
+	ADD person_id, name, date_of_birth, address, role, doctor_id  TO patients_table
+ELSE 
+	OUTPUT “Error - unable to add record to database. Patient must be registered with a doctor.”
+ENDIF
+
+
+
+#5. Identify which doctor has made the most prescriptions.
+
+GROUP prescription_table BY doctor_id
+FOR EACH UNIQUE doctor_id
+	COUNT number of prescription entries
+	ADD doctor_id and count TO results
+END FOR
+ORDER results BY count DESCENDING
+OUTPUT doctor_id at top row = doctor with highest prescription count
+
+
+
+#6. Print a list of all doctors at the hospital with biggest size (number of beds).
+
+ORDER hospitals_table BY size DESCENDING
+	OUTPUT top row = hospital with biggest size
+FOR doctors_table
+	IF hospital_id = hospital_id of hospital with biggest size
+	PRINT row
+	ENDIF
+ENDFOR
+OUTPUT List of all doctors at the hospital with biggest size
+
