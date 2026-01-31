@@ -1,1 +1,92 @@
-Codes
+/* 
+QUERY1: List of All Doctors at a Given Hospital
+Purpose: 
+  Returns a full list of the doctors based at a specified hospital.
+
+Notes:
+-	The query uses ‘?’ as a placeholder for the hospital_id which is the primary key in the hospitals table
+-	Only  doctors linked to the specified hospital_id will be returned, with all columns from the doctors table included in the output.
+-	The hospital_id and hospital_name from the hospitals table are also included in the output to confirm the correct hospital has been filtered.
+*/
+
+SELECT doctors.* , hospitals.name, hospitals.hospital_id
+FROM doctors 
+LEFT JOIN hospitals
+ON doctors.hospital_id = hospitals.hospital_id
+WHERE doctors.hospital_id = ?;
+
+
+
+/* 
+QUERY2: All Prescriptions for a Patient, Ordered by Prescription Date
+Purpose: 
+  Returns a full list of prescriptions for a specified patient, ordered by ascending prescription date.
+
+Notes:
+-	The query uses ‘?’ as a placeholder for the patient_id (the foreign key referencing person_id in the patients table).
+-	Only prescriptions linked to the specified patient_id will be returned, with all columns from the prescriptions table and patients table included in the output
+*/
+
+SELECT *
+FROM prescriptions
+LEFT JOIN patients
+ON prescriptions.patient_id = patients.person_id
+WHERE prescriptions.patient_id = ?
+ORDER BY prescription_date;
+
+
+
+/* 
+QUERY3: All Prescriptions By  Specified Doctor
+Purpose: 
+  Returns a full list of prescriptions by a specified doctor
+
+Notes:
+-	The query uses ‘?’ as a placeholder for the doctor_id (the foreign key referencing doctor_id in the doctors table)
+-	Only prescriptions linked to the specified doctor_id will be returned, with all columns from prescriptions table included in the output
+-	The person_id, name and hospital_id from the doctors table are also included in the output to confirm the correct doctor has been filtered.
+*/
+
+SELECT prescriptions.*, doctors.person_id, doctors.name, doctors.hospital_id 
+FROM prescriptions 
+LEFT JOIN doctors
+ON prescriptions.doctor_id = doctors.person_id
+WHERE prescriptions.doctor_id = ?;
+
+
+
+/* 
+QUERY4: Add New Patient Registered with a Doctor
+Purpose: 
+  Adds a new patient to the database and links them with an existing doctor. 
+
+Notes:
+-	The query uses ‘?’ as placeholders for the following columns in the patients table: person_id, name, date_of_birth, address, role, doctor_id. Values must be inputted in correct order and format. 
+-	The patients table uses doctor_id as a foreign key referencing to the personal_id in the doctors table. 
+-	If entry has non-existent doctor_id, query will fail due to foreign key constraint.
+*/
+
+INSERT INTO patients (person_id, name, date_of_birth, address, role, doctor_id) 
+VALUES (?, ?, ?, ?, ?, ?);
+ 
+
+
+/*QUERY5 ERRORING DRAFT*/
+SELECT doctor_id, COUNT(*)
+FROM prescriptions
+GROUP BY doctor_id
+LEFT JOIN doctors
+ON prescriptions.doctor_id = doctors.person_id
+ORDER BY COUNT(*) DESC; 
+
+
+/*QUERY6 ERRORING DRAFT*/
+HOSPITAL WITH BIGGEST SIZE
+SELECT * FROM hospitals WHERE hospitals.size = (SELECT MAX(hospitals.size)) ORDER BY size DESC LIMIT 1;
+
+SELECT doctors.*
+FROM hospitals
+WHERE MAX(hospitals.size)
+LEFT JOIN doctors
+ON hospitals.hospital_id = doctors.hospital_id;
+
