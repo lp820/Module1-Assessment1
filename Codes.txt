@@ -1,13 +1,115 @@
-/* 
-QUERY1: List of All Doctors at a Given Hospital
-Purpose: 
-  Returns a full list of the doctors based at a specified hospital.
+                                                            /* Codes for Creating Tables */
 
-Notes:
--	The query uses ‘?’ as a placeholder for the hospital_id which is the primary key in the hospitals table
--	Only  doctors linked to the specified hospital_id will be returned, with all columns from the doctors table included in the output.
--	The hospital_id and hospital_name from the hospitals table are also included in the output to confirm the correct hospital has been filtered.
-*/
+/* For creating and populating the hospitals table */
+
+CREATE TABLE hospitals
+(hospital_id INT unsigned NOT NULL,
+name VARCHAR(150) NOT NULL,
+address VARCHAR(150) NOT NULL,
+size INT NOT NULL,
+type VARCHAR(150) NOT NULL,
+accreditation_status VARCHAR(150) NOT NULL,
+PRIMARY KEY (hospital_id)
+);
+ 
+LOAD DATA LOCAL INFILE "~/Module1-Assessment1/hospitals.csv" INTO TABLE hospitals 
+FIELDS TERMINATED BY ',' 
+OPTIONALLY ENCLOSED BY '"'
+IGNORE 1 LINES 
+(hospital_id, name, address, size, type, accreditation_status);
+
+
+/* For creating and populating the doctors table */
+ 
+CREATE TABLE doctors
+(person_id INT unsigned NOT NULL,
+name VARCHAR(150) NOT NULL,
+date_of_birth DATE NOT NULL,
+address VARCHAR(150) NOT NULL,
+role VARCHAR(150) NOT NULL,
+hospital_id INT unsigned NOT NULL,
+PRIMARY KEY (person_id)
+);
+ 
+LOAD DATA LOCAL INFILE "~/Module1-Assessment1/doctors.csv" INTO TABLE doctors
+FIELDS TERMINATED BY ',' 
+OPTIONALLY ENCLOSED BY '"'
+IGNORE 1 LINES 
+(person_id, name, date_of_birth, address, role, hospital_id);
+
+
+/ *For creating and populating the patients table */
+ 
+CREATE TABLE patients
+(person_id INT unsigned NOT NULL,
+name VARCHAR(150) NOT NULL,
+date_of_birth DATE NOT NULL,
+address VARCHAR(150) NOT NULL,
+role VARCHAR(150) NOT NULL,
+doctor_id INT unsigned NOT NULL,
+PRIMARY KEY (person_id)
+);
+
+LOAD DATA LOCAL INFILE "~/Module1-Assessment1/patients.csv" INTO TABLE patients
+FIELDS TERMINATED BY ',' 
+OPTIONALLY ENCLOSED BY '"'
+IGNORE 1 LINES 
+(person_id, name, date_of_birth, address, role, doctor_id);
+
+
+/* For creating and populating the prescriptions table */
+ 
+CREATE TABLE prescriptions
+(prescription_id INT unsigned NOT NULL,
+patient_id INT unsigned NOT NULL,
+doctor_id INT unsigned NOT NULL,
+medication VARCHAR(150) NOT NULL,
+prescription_date DATE NOT NULL
+);
+ 
+LOAD DATA LOCAL INFILE "~/Module1-Assessment1/prescriptions.csv" INTO TABLE prescriptions
+FIELDS TERMINATED BY ',' 
+OPTIONALLY ENCLOSED BY '"'
+IGNORE 1 LINES 
+(prescription_id, patient_id, doctor_id, medication, prescription_date);
+
+
+
+                                                            /* Codes for Establishing Relationships Between Tables */
+/* To link doctors table with hospitals table*/ 
+
+ALTER TABLE doctors
+ADD CONSTRAINT fk_doctors_hospitals
+FOREIGN KEY (hospital_id)
+REFERENCES hospitals(hospital_id);
+
+
+/* To link patients table with doctors table */
+
+ALTER TABLE patients
+ADD CONSTRAINT fk_patients_doctors
+FOREIGN KEY (doctor_id)
+REFERENCES doctors(person_id);
+
+
+/* To link prescriptions table with doctors table */
+
+ALTER TABLE prescriptions
+ADD CONSTRAINT fk_prescriptions_doctors
+FOREIGN KEY (doctor_id)
+REFERENCES doctors(person_id);
+
+
+/* To link prescriptions table with patients table */
+
+ALTER TABLE prescriptions
+ADD CONSTRAINT fk_prescriptions_patients
+FOREIGN KEY (patient_id)
+REFERENCES patients(personal_id);
+
+
+                                                              /* MySQL Queries */
+/* QUERY1: List of All Doctors at a Given Hospital */
 
 SELECT doctors.* , hospitals.name, hospitals.hospital_id
 FROM doctors 
@@ -17,16 +119,7 @@ WHERE doctors.hospital_id = ?;
 
 
 
-/* 
-QUERY2: All Prescriptions for a Patient, Ordered by Prescription Date
-Purpose: 
-  Returns a full list of prescriptions for a specified patient, ordered by ascending prescription date.
-
-Notes:
--	The query uses ‘?’ as a placeholder for the patient_id (the foreign key referencing person_id in the patients table).
--	Only prescriptions linked to the specified patient_id will be returned, with all columns from the prescriptions table returned 
--	The person_id, name, date_of_birth and doctor_id from the patients table are also included in the output to confirm the correct patient has been filtered.
-*/
+/* QUERY2: All Prescriptions for a Patient, Ordered by Prescription Date */
 
 SELECT prescriptions.*, patients.person_id, patients.name, patients.date_of_birth, patients.doctor_id
 FROM prescriptions
@@ -37,16 +130,7 @@ ORDER BY prescription_date;
 
 
 
-/* 
-QUERY3: All Prescriptions By  Specified Doctor
-Purpose: 
-  Returns a full list of prescriptions by a specified doctor
-
-Notes:
--	The query uses ‘?’ as a placeholder for the doctor_id (the foreign key referencing doctor_id in the doctors table)
--	Only prescriptions linked to the specified doctor_id will be returned, with all columns from prescriptions table included in the output
--	The person_id, name and hospital_id from the doctors table are also included in the output to confirm the correct doctor has been filtered.
-*/
+/* QUERY3: All Prescriptions By Specified Doctor */
 
 SELECT prescriptions.*, doctors.person_id, doctors.name, doctors.hospital_id 
 FROM prescriptions 
@@ -55,21 +139,11 @@ ON prescriptions.doctor_id = doctors.person_id
 WHERE prescriptions.doctor_id = ?;
 
 
-
-/* 
-QUERY4: Add New Patient Registered with a Doctor
-Purpose: 
-  Adds a new patient to the database and links them with an existing doctor. 
-
-Notes:
--	The query uses ‘?’ as placeholders for the following columns in the patients table: person_id, name, date_of_birth, address, role, doctor_id. Values must be inputted in correct order and format. 
--	The patients table uses doctor_id as a foreign key referencing to the personal_id in the doctors table. 
--	If entry has non-existent doctor_id, query will fail due to foreign key constraint.
-*/
+/* QUERY4: Add New Patient Registered with a Doctor */
 
 INSERT INTO patients (person_id, name, date_of_birth, address, role, doctor_id) 
 VALUES (?, ?, ?, ?, ?, ?);
- 
+
 
 
 /*QUERY5 ERRORING DRAFT*/
@@ -81,20 +155,14 @@ ON prescriptions.doctor_id = doctors.person_id
 ORDER BY COUNT(*) DESC; 
 
 
-/*QUERY6 ERRORING DRAFT*/
-HOSPITAL WITH BIGGEST SIZE
-SELECT * FROM hospitals WHERE hospitals.size = (SELECT MAX(hospitals.size)) ORDER BY size DESC LIMIT 1;
 
-SELECT doctors.*
-FROM hospitals
-WHERE MAX(hospitals.size)
-LEFT JOIN doctors
-ON hospitals.hospital_id = doctors.hospital_id;
+/* QUERY6: All Doctors in the Hospital with Largest Capacity */
 
-SELECT doctors.*, MAX(size)
+SELECT doctors.*, hospitals.name, hospitals.size
 FROM hospitals
-WHERE size=MAX(size)
 LEFT JOIN doctors
-ON hospitals.hospital_id = doctors.hospital_id;
+ON hospitals.hospital_id = doctors.hospital_id
+WHERE size = (SELECT MAX(size) FROM hospitals);
+
 
 
