@@ -23,7 +23,7 @@ Within the database four tables were constructed: hospitals, doctors, patients a
 
 ## Creating the Database
 
-!!!INSERT ERD!!! 
+<img width="358" height="322" alt="Image" src="https://github.com/user-attachments/assets/b1e0e72c-d564-4ab0-9ddd-7bb6526cc2d3" />
 
 Prior to constructing the database, an entity relationship diagram was created to outline the structure of the tables and illustrate the relationships that will be used to link them. Tables were created and populated using the skeleton MySQL codes below, with each table assigned the appropriate primary key to ensure unique record identification:
 
