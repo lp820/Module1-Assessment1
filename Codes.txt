@@ -64,7 +64,8 @@ CREATE TABLE prescriptions
 patient_id INT unsigned NOT NULL,
 doctor_id INT unsigned NOT NULL,
 medication VARCHAR(150) NOT NULL,
-prescription_date DATE NOT NULL
+prescription_date DATE NOT NULL,
+PRIMARY KEY (prescription_id)
 );
  
 LOAD DATA LOCAL INFILE "~/Module1-Assessment1/prescriptions.csv" INTO TABLE prescriptions
@@ -105,7 +106,7 @@ REFERENCES doctors(person_id);
 ALTER TABLE prescriptions
 ADD CONSTRAINT fk_prescriptions_patients
 FOREIGN KEY (patient_id)
-REFERENCES patients(personal_id);
+REFERENCES patients(person_id);
 
 
                                                               /* MySQL Queries */
@@ -146,13 +147,15 @@ VALUES (?, ?, ?, ?, ?, ?);
 
 
 
-/*QUERY5 ERRORING DRAFT*/
-SELECT doctor_id, COUNT(*)
-FROM prescriptions
-GROUP BY doctor_id
+/* QUERY5: Doctor with Most Prescription */
+
+SELECT doctors.*, COUNT(*) 
+FROM prescriptions 
 LEFT JOIN doctors
 ON prescriptions.doctor_id = doctors.person_id
-ORDER BY COUNT(*) DESC; 
+GROUP BY doctor_id
+ORDER BY COUNT(*) DESC 
+LIMIT 1;
 
 
 
