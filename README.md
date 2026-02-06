@@ -1,7 +1,7 @@
 # HPDM206Z - Assessment 1
 
 ## Project Aim
-The aim of this project is to use MySQL to create a relational database (named as Module1_Assessment1),  where specific information relating to hospitals, doctors, patients and prescriptions can be extracted using MySQL Queries. 
+The aim of this project is to use MySQL to create a relational database (named as Hospital_database),  where specific information relating to hospitals, doctors, patients and prescriptions can be extracted using MySQL Queries. 
 
 ## Built With
 + OpenStack
@@ -56,6 +56,8 @@ FOREIGN KEY (column_name)
 REFERENCES reference_table(reference_column);
 ```
 The full codes used for construction and linkage of the tables can be found in the *[Codes.txt](Codes.txt)* file.
+
+The final database is accesible using the *[Hospital_database.sql](Hospital_database.sql)* file.
 
 ## SQL Query Scripts
 
