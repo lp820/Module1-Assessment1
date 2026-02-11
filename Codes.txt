@@ -118,6 +118,18 @@ LEFT JOIN hospitals
 ON doctors.hospital_id = hospitals.hospital_id
 WHERE doctors.hospital_id = ?;
 
+/* 
+
+QUERY1 Example - To list all the doctors at King-Dillon Hospital (hospital_id = 24) 
+
+SELECT doctors.* , hospitals.name, hospitals.hospital_id
+FROM doctors 
+LEFT JOIN hospitals
+ON doctors.hospital_id = hospitals.hospital_id
+WHERE doctors.hospital_id = 24;
+
+*/
+
 
 
 /* QUERY2: All Prescriptions for a Patient, Ordered by Prescription Date */
@@ -129,6 +141,19 @@ ON prescriptions.patient_id = patients.person_id
 WHERE prescriptions.patient_id = ?
 ORDER BY prescription_date;
 
+/*
+
+QUERY2 Example - To list all prescriptions for patient Chad Weiss (patient_id = 123) in ascending prescription date 
+
+SELECT prescriptions.*, patients.person_id, patients.name, patients.date_of_birth, patients.doctor_id
+FROM prescriptions
+LEFT JOIN patients
+ON prescriptions.patient_id = patients.person_id
+WHERE prescriptions.patient_id = 123
+ORDER BY prescription_date;
+
+*/ 
+
 
 
 /* QUERY3: All Prescriptions By Specified Doctor */
@@ -139,12 +164,39 @@ LEFT JOIN doctors
 ON prescriptions.doctor_id = doctors.person_id
 WHERE prescriptions.doctor_id = ?;
 
+/*
+
+QUERY3 Example - To list all prescriptions made by Dr. Alvin Nelson (doctor_id =29)
+
+SELECT prescriptions.*, doctors.person_id, doctors.name, doctors.hospital_id 
+FROM prescriptions 
+LEFT JOIN doctors
+ON prescriptions.doctor_id = doctors.person_id
+WHERE prescriptions.doctor_id = 29;
+
+*/
+
+
 
 /* QUERY4: Add New Patient Registered with a Doctor */
 
 INSERT INTO patients (person_id, name, date_of_birth, address, role, doctor_id) 
 VALUES (?, ?, ?, ?, ?, ?);
 
+/* 
+
+QUERY4 Example - To add a new patient, registered with Dr. Mary Lopez (doctor_id = 27), with the following details:
+- person_id: 750 (  *NOTE:  Randomly generated using the code    SELECT FLOOR(RAND()*(1000-701+1)+701);  )
+- name: First Last
+- date_of_birth: 2013-11-06 (  *NOTE: Randomly generated using the code   SELECT CURRENT_DATE - INTERVAL FLOOR(RAND() * 7305) DAY;   )
+- address: MG5U7KPU9    (  *NOTE: Randomly generated using the code  SELECT CONV(FLOOR(RAND() * 99999999999999), 10, 36);     )
+- role: Patient
+- doctor_id = 27
+
+INSERT INTO patients (person_id, name, date_of_birth, address, role, doctor_id)
+VALUES (750, ‘First Last’, ‘2013-11-06’, ‘MG5U7KPU9’, ‘Patient’, 27);
+
+*/
 
 
 /* QUERY5: Doctor with Most Prescription */
